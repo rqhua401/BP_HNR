@@ -1,6 +1,7 @@
 import numpy as np
 import pickle, gzip
 import matplotlib.pyplot as plt
+import time
 
 class MLP:
     " Multi-layer perceptron "
@@ -72,10 +73,14 @@ class MLP:
             # # compute the derivative of the second hidden layer
             err_layor2 = deltao.dot(self.weights3.T)
             deltah2 = np.delete(err_layor2 * self.sigmoid_prime(self.beta,self.input_hidden2),-1,axis=-1)
+            # deltah2 = np.delete(err_layor2 * self.relu_grad(self.input_hidden2), -1, axis=-1)
+            # deltah2 = np.delete(err_layor2 * self.Tanh_deriv(self.input_hidden2), -1, axis=-1)
 
             # compute the derivative of the first hidden layer
             err_layor1 = deltah2.dot(self.weights2.T)
             deltah1 = np.delete(err_layor1 * self.sigmoid_prime(self.beta,self.input_hidden1),-1,axis=-1)
+            # deltah1 = np.delete(err_layor1 * self.relu_grad(self.input_hidden1), -1, axis=-1)
+            # deltah1 = np.delete(err_layor1 * self.Tanh_deriv(self.input_hidden1), -1, axis=-1)
 
             # update the weights of the three layers: self.weights1, self.weights2 and self.weights3
             # here you can update the weights as we did in the week 4 lab (using gradient descent)
@@ -98,6 +103,8 @@ class MLP:
         # compute the forward pass on the first hidden layer with the sigmoid function
         self.hidden1 = np.zeros([inputs.shape[0],self.nhidden1])
         self.hidden1 = self.sigmoid(self.beta,np.dot(inputs,self.weights1))
+        # self.hidden1 = self.relu(np.dot(inputs, self.weights1))
+        # self.hidden1 = self.Tanh(np.dot(inputs, self.weights1))
 
         # layer 2
         # compute the forward pass on the second hidden layer with the sigmoid function
@@ -107,6 +114,8 @@ class MLP:
         self.hidden1 = np.concatenate((self.hidden1, -np.ones((ndata1, 1))), axis=1)
         self.hidden2 = np.zeros([self.hidden1.shape[0],self.nhidden2])
         self.hidden2 = self.sigmoid(self.beta,np.dot(self.hidden1,self.weights2))
+        # self.hidden2 = self.relu(np.dot(self.hidden1, self.weights2))
+        # self.hidden2 = self.Tanh(np.dot(self.hidden1, self.weights2))
 
         # output layer
         # compute the forward pass on the output layer with softmax function
@@ -164,6 +173,21 @@ class MLP:
     def sigmoid_prime(self,beta,x):
         return beta*self.sigmoid(beta,x)*(1-self.sigmoid(beta,x))
 
+
+    def relu(self,x):
+        x2 = (np.abs(x) + x) / 2.0
+        return x2
+
+    def relu_grad(self,x):
+        return np.where(x > 0, 1, 0)
+
+    def Tanh(self,x):
+        return (np.exp(x) - np.exp(-x)) / (np.exp(-x) + np.exp(x))
+
+    def Tanh_deriv(self,x):
+        y = (np.exp(x) - np.exp(-x)) / (np.exp(-x) + np.exp(x))
+        return 1 - y * y
+
     def softmax(self, x):
         row_max = np.max(x, axis=1).reshape(-1, 1)
         x -= row_max
@@ -178,7 +202,7 @@ def run():
     f.close()
 
     # Just use the first 9000 images for training
-    tread = 9000
+    tread = 5000
     train_in = tset[0][:tread, :]
     # This is a little bit of work -- 1 of N encoding
     # Make sure you understand how it does it
@@ -194,8 +218,12 @@ def run():
         test_tgt[i, teset[1][i]] = 1
     sizes = [784, 32, 64, 10]  # 784 is the number of pixels of the images and 10 is the number of classes
     classifier = MLP(sizes)
+    start = time.time()
     classifier.train(train_in, train_tgt, 0.01, 1000)
     classifier.evaluate(test_in, test_tgt)
+    end = time.time()
+
+    print('Running time: %s Seconds' % (end - start))
 
 
 if __name__ == "__main__":
