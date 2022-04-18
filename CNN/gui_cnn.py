@@ -101,7 +101,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
     """
     # 模式下拉列表回调
     def cbBox_Mode_Callback(self, text):
-        if text == '1：随机抽取MNIST集':
+        if text == '1：Random image from MNIST':
             self.mode = MODE_MNIST
             self.clearDataArea()
             self.pbtGetMnist.setEnabled(True)
@@ -109,7 +109,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
             self.paintBoard.setBoardFill(QColor(0,0,0,0))
             self.paintBoard.setPenColor(QColor(0,0,0,0))
 
-        elif text == '2：鼠标手写输入':
+        elif text == '2：Write digit by mouse':
             self.mode = MODE_WRITE
             self.clearDataArea()
             self.pbtGetMnist.setEnabled(False)

@@ -27,15 +27,6 @@ Thresh = 0.5  # 识别结果置信度阈值
 
 # 初始化网络
 
-# 网络1：简单CNN
-"""
-conv - relu - pool - affine - relu - affine - softmax
-"""
-# network = SimpleConvNet(input_dim=(1, 28, 28),
-#                         conv_param={'filter_num': 30, 'filter_size': 5, 'pad': 0, 'stride': 1},
-#                         hidden_size=100, output_size=10, weight_init_std=0.01)
-# network.load_params("params.pkl")
-
 # 网络：BP network网络
 f = gzip.open('mnist.pkl.gz', 'rb')
 tset, vset, teset = pickle.load(f, encoding='latin1')
@@ -88,12 +79,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.paintBoard.Clear()
         self.lbDataArea.clear()
         self.lbResult.clear()
-        self.lbCofidence.clear()
+        # self.lbCofidence.clear()
         self.result = [0, 0]
 
     # 模式下拉列表回调
     def cbBox_Mode_Callback(self, text):
-        if text == '1：随机抽取MNIST集':
+        if text == '1：Random image from MNIST':
             self.mode = MODE_MNIST
             self.clearDataArea()
             self.pbtGetMnist.setEnabled(True)
@@ -101,7 +92,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.paintBoard.setBoardFill(QColor(0, 0, 0, 0))
             self.paintBoard.setPenColor(QColor(0, 0, 0, 0))
 
-        elif text == '2：鼠标手写输入':
+        elif text == '2：Write digit by mouse':
             self.mode = MODE_WRITE
             self.clearDataArea()
             self.pbtGetMnist.setEnabled(False)
@@ -136,10 +127,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         img_array = np.array(pil_img.convert('L')).reshape(784,) / 255.0
 
         self.result[0] = network.test_single(img_array)  # 预测的数字
-        self.result[1] = 1  # 置信度
+        # self.result[1] = 1  # 置信度
 
         self.lbResult.setText("%d" % (self.result[0]))
-        self.lbCofidence.setText("%.8f" % (self.result[1]))
+        # self.lbCofidence.setText("%.8f" % (self.result[1]))
 
     # 随机抽取
     def pbtGetMnist_Callback(self):

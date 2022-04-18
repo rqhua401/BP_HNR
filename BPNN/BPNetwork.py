@@ -151,8 +151,8 @@ class MLP:
             for j in range(nclasses):
                 cm[i, j] = np.sum(np.where(outputs == i, 1, 0) * np.where(targets == j, 1, 0))
 
-        print("The confusion matrix is:")
-        print(cm)
+        # print("The confusion matrix is:")
+        # print(cm)
         print("The accuracy is ", np.trace(cm) / np.sum(cm) * 100)
 
         return cm
@@ -198,11 +198,11 @@ class MLP:
 def run():
     f = gzip.open('mnist.pkl.gz', 'rb')
     tset, vset, teset = pickle.load(f, encoding='latin1')
-    print(tset[0].shape, vset[0].shape, teset[0].shape)
+    # print(tset[0].shape, vset[0].shape, teset[0].shape)
     f.close()
 
     # Just use the first 9000 images for training
-    tread = 5000
+    tread = 9000
     train_in = tset[0][:tread, :]
     # This is a little bit of work -- 1 of N encoding
     # Make sure you understand how it does it
